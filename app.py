@@ -12,6 +12,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 
 df_2015=pd.read_csv('new_york_tree_census_2015.csv')
+df_2015=df_2015.dropna()
 #tree_name='pine'
 
 app.layout = html.Div(children=[
@@ -36,9 +37,9 @@ html.Label('Map This Tree Type:'),
     [Input('text_in','value')])
 def update_tree(tree_name):
     data=[]
-    for t in df_2015.dropna().loc[df_2015.dropna()['spc_common'].str.contains(tree_name)]['spc_common'].value_counts().index:
-        data.append(go.Scattermapbox(lat=df_2015.dropna().loc[df_2015.dropna()['spc_common']==t]['latitude'],
-                               lon=df_2015.dropna().loc[df_2015.dropna()['spc_common']==t]['longitude'],
+    for t in df_2015.loc[df_2015['spc_common'].str.contains(tree_name)]['spc_common'].value_counts().index:
+        data.append(go.Scattermapbox(lat=df_2015.loc[df_2015['spc_common']==t]['latitude'],
+                               lon=df_2015.loc[df_2015['spc_common']==t]['longitude'],
                                mode='markers',
                                  name=t,
                               marker=go.scattermapbox.Marker(size=5)
