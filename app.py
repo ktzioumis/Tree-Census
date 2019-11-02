@@ -13,7 +13,8 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 df_2015=pd.read_csv('new_york_tree_census_2015.csv')
 df_2015=df_2015.dropna()
-#tree_name='pine'
+df_2015=df_2015[['spc_common','latitude','longitude']]
+df_2015['spc_common']=df_2015['spc_common'].str.lower()                 
 
 app.layout = html.Div(children=[
     html.H1(children='NYC Tree Mapper'),
@@ -37,7 +38,7 @@ html.Label('Map This Tree Type:'),
     [Input('text_in','value')])
 def update_tree(tree_name):
     data=[]
-    for t in df_2015.loc[df_2015['spc_common'].str.contains(tree_name)]['spc_common'].value_counts().index:
+    for t in df_2015.loc[df_2015['spc_common'].str.contains(tree_name.lower())]['spc_common'].value_counts().index:
         data.append(go.Scattermapbox(lat=df_2015.loc[df_2015['spc_common']==t]['latitude'],
                                lon=df_2015.loc[df_2015['spc_common']==t]['longitude'],
                                mode='markers',
@@ -46,7 +47,7 @@ def update_tree(tree_name):
                       ))
     return {
             'data': data,
-            'layout': go.Layout(height=600, mapbox_style="carto-positron",
+            'layout': go.Layout(height=600, mapbox_style="carto-positron",showlegend=True,
                   mapbox_zoom=9, mapbox_center = {"lat": 40.7, "lon": -73.86},margin={"r":0,"t":30,"l":0,"b":0})
         }
      
